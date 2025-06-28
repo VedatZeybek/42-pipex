@@ -45,46 +45,50 @@
 // 	waitpid(pid2, NULL, 0);
 // }
 
-// char *get_cmd_path(char *cmd, char **envp)
-// {
-// 	int i = 0;
-// 	char *path = NULL;
-// 	char **paths = NULL;
-// 	char *full_path = NULL;
+char *get_cmd_path(char *cmd, char **envp)
+{
+	int i = 0;
+	char *path = NULL;
+	char **paths = NULL;
+	char *full_path = NULL;
 
-// 	while (envp[i] && strncmp(envp[i], "PATH=", 5) != 0)
-// 		i++;
-//     if (!envp[i])
-//         return NULL;
+	while (envp[i] && strncmp(envp[i], "PATH=", 5) != 0)
+		i++;
+    if (!envp[i])
+        return NULL;
     
-//     path = envp[i] + 5;
-//     paths = ft_split(path, ':');
+    path = envp[i] + 5;
+    paths = ft_split(path, ':');
 
-//     i = 0;
-//     while (paths[i])
-//     {
-//         full_path = ft_strjoin(ft_strjoin(paths[i], "/"), cmd);
-//         if (access(full_path, X_OK) == 0)
-//         {
-//             return full_path;
-//         }
-//         free(full_path);
-//         i++;
-//     }
-//     return NULL;
-// }
-extern char **environ;
+    i = 0;
+    while (paths[i])
+    {
+        full_path = ft_strjoin(ft_strjoin(paths[i], "/"), cmd);
+        if (access(full_path, X_OK) == 0)
+        {
+            return full_path;
+        }
+        free(full_path);
+        i++;
+    }
+    return NULL;
+}
 
 
-int main()
+
+int main(int argc, char **argv, char **envp)
 {
 	int fd0 = open("input.txt", O_RDONLY, 0644);
-	int fd1 = open("output.txt", O_CREAT | O_RDWR, 0644);
+	int fd1 = open("output.txt", O_CREAT | O_RDWR | O_TRUNC, 0644);
 
 	int pipefd[2];
 	pid_t pid1, pid2;
 	pipe(pipefd);
+	char **cmd1_args = ft_split(argv[2], ' ');
+	char **cmd2_args = ft_split(argv[3], ' ');
 
+	printf("get_cmd_path: %s\n", get_cmd_path(cmd1_args[0], envp));
+	printf("get_cmd_path: %s\n", get_cmd_path(cmd2_args[0], envp));
 	pid1 = fork();
 	if (pid1 == 0)
 	{
@@ -94,11 +98,8 @@ int main()
 		close(pipefd[1]);
 		close(fd0);
 		close(fd1);
-
-		char *args[] = {"cat", NULL};
-		execve("/usr/bin/cat", args, environ);
+		execve(ft_strjoin("/usr/bin/", cmd1_args[0]), cmd1_args, envp);
 	}
-
 	pid2 = fork();
 	if (pid2 == 0)
 	{
@@ -106,17 +107,15 @@ int main()
 		dup2(fd1, STDOUT_FILENO);
 		close(pipefd[0]);
 		close(pipefd[1]);
-        close(fd0);
-        close(fd1);
-
-		char *args[] = {"grep", "hello", NULL};
-		execve("/usr/bin/grep", args, environ);
+		close(fd0);
+		close(fd1);
+		execve(ft_strjoin("/usr/bin/", cmd2_args[0]), cmd2_args, envp);
 	}
 
 	close(pipefd[0]);
-    close(pipefd[1]);
-    close(fd0);
-    close(fd1);
+	close(pipefd[1]);
+	close(fd0);
+	close(fd1);
 
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, NULL, 0);
