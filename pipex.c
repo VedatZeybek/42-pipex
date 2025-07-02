@@ -2,6 +2,7 @@
 #include "unistd.h"
 #include "fcntl.h"
 #include "stdio.h"
+#include "stdlib.h"
 #include "sys/wait.h"
 
 
@@ -24,14 +25,34 @@ char	*get_env(char **env)
 	return (NULL);
 }
 
-void get_path(char *cmd, char **env)
+char	*get_path(char *cmd, char **env)
 {
 	int		i;
-	char *exec;
+	char	*exec;
+	char	**cmd_splitted;
+	char	**path_splitted;
+	char	*cmd_path;
 
-	
+	cmd_splitted = ft_split(cmd, ' ');
+	path_splitted = ft_split(get_env(env), ':');
+	i = 0;
+	while (path_splitted[i])
+	{
+		if (cmd_path)
+			free(cmd_path);
+		cmd_path = ft_strjoin(path_splitted[i], cmd_splitted[0]);
+		if (access(cmd_path, F_OK | X_OK))
+			return (cmd_path);
+		i++;
+	}
+	return (NULL);
 }
 
+
+char	*parse_args()
+{
+	
+}
 
 
 int main(int argc, char **argv, char **env)
