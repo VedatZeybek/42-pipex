@@ -36,10 +36,9 @@ char	*get_path(char *cmd, char **env)
 	i = 0;
 	while (path_splitted[i])
 	{
-		if (cmd_path)
-			free(cmd_path);
-		cmd_path = ft_strjoin(path_splitted[i], cmd_splitted[0]);
-		if (access(cmd_path, F_OK | X_OK))
+		cmd_path = ft_strjoin(path_splitted[i], "/");
+		cmd_path = ft_strjoin(cmd_path, cmd_splitted[0]);
+		if (access(cmd_path, F_OK | X_OK) == 0)
 			return (cmd_path);
 		i++;
 	}
@@ -49,9 +48,9 @@ char	*get_path(char *cmd, char **env)
 int	child_process1(int fd_in, int fd_out, int *pipefd ,char **argv, char **env)
 {
 	pid_t pid0;
-	char *str[20];
+	char **str;
 
-	ft_split(argv[2], ' ');
+	str = ft_split(argv[2], ' ');
 	pid0 = fork();
 	if (pid0 == 0)
 	{
