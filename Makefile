@@ -1,13 +1,17 @@
-NAME = pipex
+NAME        = pipex
+BONUS_NAME	= pipex
 
-SRC = pipex.c get_path.c error.c
+SRC         = pipex.c get_path.c error.c
+BONUS_SRC   = ./bonus/pipex_bonus.c ./bonus/utils_bonus.c \
+			./bonus/get_next_line.c get_path.c error.c  
 
-OBJ = $(SRC:.c=.o)
+OBJ         = $(SRC:.c=.o)
+BONUS_OBJ   = $(BONUS_SRC:.c=.o)
 
-CC = cc
-CFLAGS = -Wall -Wextra -Werror
-LIBFT =	./libft/libft.a
-
+CC          = cc
+CFLAGS      = -Wall -Wextra -Werror
+LIBFT       = ./libft/libft.a
+LIBFT_DIR   = ./libft
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
@@ -18,20 +22,24 @@ $(NAME): $(OBJ) $(LIBFT)
 	@echo "Linking $(NAME)..."
 	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
 
+bonus: $(BONUS_OBJ) $(LIBFT)
+	@echo "Linking bonus into $(NAME)..."
+	@$(CC) $(CFLAGS) $(BONUS_OBJ) $(LIBFT) -o $(NAME)
+
 $(LIBFT):
 	@echo "Libft files compiling..."
-	@$(MAKE) -s -C ./libft all
+	@$(MAKE) -s -C $(LIBFT_DIR) all
 
 clean:
-	@echo "Object files cleaning..."
-	@rm -rf $(OBJ)
-	@$(MAKE) -s -C ./libft fclean
+	@echo "Cleaning object files..."
+	@rm -f $(OBJ) $(BONUS_OBJ)
+	@$(MAKE) -s -C $(LIBFT_DIR) clean
 
 fclean: clean
-	@echo "All files cleaning..."
-	@rm -rf $(NAME)
-	@$(MAKE) -s -C ./libft fclean
+	@echo "Removing $(NAME)..."
+	@rm -f $(NAME)
+	@$(MAKE) -s -C $(LIBFT_DIR) fclean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all bonus clean fclean re

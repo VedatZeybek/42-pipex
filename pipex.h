@@ -19,5 +19,7 @@ void	error(char *msg);
 void	free_splitted(char **str);
 char	*get_cmd_path(char *cmd, char **envp);
 int		validate_args(int argc, char **argv);
+void	close_files(int fd0, int fd1, int fd2);
+int		open_file(char *file_name, int no);
 
 #endif
