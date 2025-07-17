@@ -11,7 +11,6 @@
 # define ERR_CLS "Close File Failded."
 
 # include <fcntl.h>
-# include <stdlib.h>
 # include <sys/wait.h>
 # include <stdio.h>
 # include "./libft/libft.h"
