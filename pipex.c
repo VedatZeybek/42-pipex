@@ -7,8 +7,8 @@ void	first_child(int	*pipe_fd, char **argv, char **env)
 	char	**cmd1_args;
 	char	*cmd_path;
 
-	cmd1_args = ft_split(argv[2], ' ');
 	infile = open_file(argv[1], 0);
+	cmd1_args = ft_split(argv[2], ' ');
 	pid = fork();
 	if (pid < 0)
 		error(ERR_PRC);
@@ -36,8 +36,8 @@ void	second_child(int *pipe_fd, char **argv, char **env)
 	char	**cmd2_args;
 	char	*cmd_path;
 
-	cmd2_args = ft_split(argv[3], ' ');
 	outfile = open_file(argv[4], 1);
+	cmd2_args = ft_split(argv[3], ' ');
 	pid = fork();
 	if (pid < 0)
 		error(ERR_PRC);

@@ -1,17 +1,16 @@
-NAME        = pipex
-BONUS_NAME	= pipex
+NAME		= pipex
 
-SRC         = pipex.c get_path.c error.c
-BONUS_SRC   = ./bonus/pipex_bonus.c ./bonus/utils_bonus.c \
+SRC			= pipex.c get_path.c error.c
+BONUS_SRC	= ./bonus/pipex_bonus.c ./bonus/utils_bonus.c \
 			./bonus/get_next_line.c get_path.c error.c  
 
-OBJ         = $(SRC:.c=.o)
-BONUS_OBJ   = $(BONUS_SRC:.c=.o)
+OBJ			= $(SRC:.c=.o)
+BONUS_OBJ	= $(BONUS_SRC:.c=.o)
 
-CC          = cc
-CFLAGS      = -Wall -Wextra -Werror
-LIBFT       = ./libft/libft.a
-LIBFT_DIR   = ./libft
+CC			= cc
+CFLAGS		= -Wall -Wextra -Werror
+LIBFT		= ./libft/libft.a
+LIBFT_DIR	= ./libft
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
