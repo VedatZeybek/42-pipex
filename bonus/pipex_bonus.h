@@ -5,10 +5,30 @@
 #  define BUFFER_SIZE 42
 # endif
 
-# include "../pipex.h"
+
+# define ERR_INPUT "Invalid number of arguments."
+# define ERR_FILE "Invalid File."
+# define ERR_PATH "Path Not Found."
+# define ERR_CMD "Command Not Found."
+# define ERR_PRC "Process Failded."
+# define ERR_PIPE "Pipe Creation Failded."
+# define ERR_EXCVE "Execution Failded."
+# define ERR_CLS "Close File Failded."
+
+# include <fcntl.h>
+# include <sys/wait.h>
+# include <stdio.h>
+# include "../libft/libft.h"
 
 int		validate_args_bonus(int argc, char **argv);
 void	here_doc(char *limiter);
 char	*get_next_line(int fd);
+char	*get_cmd_path(char *cmd, char **envp);
+int		validate_args(int argc, char **argv);
+void	free_splitted(char **str);
+void	error(char *msg);
+int		open_file(char *file_name, int no);
+void	close_files(int fd0, int fd1, int fd2);
+void	child_cmd(char *argv, char **env);
 
 #endif

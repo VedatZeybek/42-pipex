@@ -1,46 +1,33 @@
 #include "pipex_bonus.h"
 
-static void	execute_child(char *argv, char **env, int fd[])
+static void	execute_last_cmd(char *argv, char **env, int file_output)
 {
+	pid_t	pid;
 	char	**args;
 	char	*cmd_path;
 
-	close(fd[0]);
-	dup2(fd[1], STDOUT_FILENO);
-	close(fd[1]);
-	args = ft_split(argv, ' ');
-	cmd_path = get_cmd_path(args[0], env);
-	if (!cmd_path)
-	{
-		free_splitted(args);
-		error(ERR_CMD);
-	}
-	if (execve(cmd_path, args, env) == -1)
-		error(ERR_EXCVE);
-}
-
-static void	handle_parent(int fd[], pid_t pid)
-{
-	close(fd[1]);
-	dup2(fd[0], STDIN_FILENO);
-	close(fd[0]);
-	waitpid(pid, NULL, 0);
-}
-
-static void	child_cmd(char *argv, char **env)
-{
-	pid_t	pid;
-	int		fd[2];
-
-	if (pipe(fd) == -1)
-		error(ERR_PIPE);
 	pid = fork();
 	if (pid == -1)
 		error(ERR_PRC);
 	if (pid == 0)
-		execute_child(argv, env, fd);
+	{
+		dup2(file_output, STDOUT_FILENO);
+		close(file_output);
+		args = ft_split(argv, ' ');
+		cmd_path = get_cmd_path(args[0], env);
+		if (!cmd_path)
+		{
+			free_splitted(args);
+			error(ERR_CMD);
+		}
+		if (execve(cmd_path, args, env) == -1)
+			error(ERR_EXCVE);
+	}
 	else
-		handle_parent(fd, pid);
+	{
+		close(file_output);
+		waitpid(pid, NULL, 0);
+	}
 }
 
 static void	first_file(int argc, char **argv, int *file_output, int *i)
@@ -67,8 +54,6 @@ int	main(int argc, char **argv, char **env)
 {
 	int		i;
 	int		file_output;
-	char	**args;
-	char	*cmd_path;
 
 	if (argc < 5)
 		error(ERR_INPUT);
@@ -77,16 +62,6 @@ int	main(int argc, char **argv, char **env)
 	first_file(argc, argv, &file_output, &i);
 	while (i < argc - 2)
 		child_cmd(argv[i++], env);
-	dup2(file_output, STDOUT_FILENO);
-	close(file_output);
-	args = ft_split(argv[argc - 2], ' ');
-	cmd_path = get_cmd_path(args[0], env);
-	if (!cmd_path)
-	{
-		free_splitted(args);
-		error(ERR_CMD);
-	}
-	if (execve(cmd_path, args, env) == -1)
-		error(ERR_EXCVE);
+	execute_last_cmd(argv[argc - 2], env, file_output);
 	return (0);
 }

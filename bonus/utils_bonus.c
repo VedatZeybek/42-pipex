@@ -30,22 +30,29 @@ int	validate_args_bonus(int argc, char **argv)
 static void	exec_heredoc(char *limiter, int fd[])
 {
 	char	*line;
+	size_t	limiter_len;
+	size_t	line_len;
 
 	close(fd[0]);
-	write(1, "heredoc> ", 9);
-	line = get_next_line(0);
+	limiter_len = ft_strlen(limiter);
+	write(STDOUT_FILENO, "heredoc> ", 9);
+	line = get_next_line(STDIN_FILENO);
 	while (line != NULL)
 	{
-		if (ft_strncmp(line, limiter, ft_strlen(limiter)) == 0
-			&& line[ft_strlen(limiter)] == '\n')
+		line_len = ft_strlen(line);
+		if (line_len > 0 && line[line_len - 1] == '\n')
+			line[line_len - 1] = '\0';
+		if (ft_strncmp(line, limiter, limiter_len) == 0 && 
+			ft_strlen(line) == limiter_len)
 		{
 			free(line);
 			break ;
 		}
-		write(fd[1], line, ft_strlen(line));
+		line[line_len - 1] = '\n';
+		write(fd[1], line, line_len);
 		free(line);
-		write(1, "heredoc> ", 9);
-		line = get_next_line(0);
+		write(STDOUT_FILENO, "heredoc> ", 9);
+		line = get_next_line(STDIN_FILENO);
 	}
 	close(fd[1]);
 	exit(EXIT_SUCCESS);
@@ -55,6 +62,7 @@ void	here_doc(char *limiter)
 {
 	int		fd[2];
 	pid_t	pid;
+	int		status;
 
 	if (pipe(fd) == -1)
 		error(ERR_PIPE);
@@ -68,6 +76,6 @@ void	here_doc(char *limiter)
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
 		close(fd[0]);
-		wait(NULL);
+		waitpid(pid, &status, 0);
 	}
 }

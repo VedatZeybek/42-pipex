@@ -1,8 +1,9 @@
 NAME		= pipex
 
-SRC			= pipex.c get_path.c error.c
-BONUS_SRC	= ./bonus/pipex_bonus.c ./bonus/utils_bonus.c \
-			./bonus/get_next_line.c get_path.c error.c  
+SRC			= ./mandatory/pipex.c ./mandatory/get_path.c ./mandatory/error.c
+
+BONUS_SRC	= ./bonus/pipex_bonus.c ./bonus/utils_bonus.c  ./bonus/child_bonus.c \
+			  ./bonus/get_next_line_bonus.c ./bonus/get_path_bonus.c ./bonus/error_bonus.c  
 
 OBJ			= $(SRC:.c=.o)
 BONUS_OBJ	= $(BONUS_SRC:.c=.o)
