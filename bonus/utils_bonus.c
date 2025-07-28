@@ -35,7 +35,7 @@ static void	exec_heredoc(char *limiter, int fd[])
 
 	close(fd[0]);
 	limiter_len = ft_strlen(limiter);
-	write(STDOUT_FILENO, "heredoc> ", 9);
+	write(STDOUT_FILENO, "> ", 2);
 	line = get_next_line(STDIN_FILENO);
 	while (line != NULL)
 	{
@@ -51,7 +51,7 @@ static void	exec_heredoc(char *limiter, int fd[])
 		line[line_len - 1] = '\n';
 		write(fd[1], line, line_len);
 		free(line);
-		write(STDOUT_FILENO, "heredoc> ", 9);
+		write(STDOUT_FILENO, "> ", 2);
 		line = get_next_line(STDIN_FILENO);
 	}
 	close(fd[1]);

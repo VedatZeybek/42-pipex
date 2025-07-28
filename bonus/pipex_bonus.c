@@ -37,7 +37,7 @@ static void	first_file(int argc, char **argv, int *file_output, int *i)
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
 	{
 		*i = 3;
-		*file_output = open_file(argv[argc - 1], 1);
+		*file_output = open_file(argv[argc - 1], 2);
 		here_doc(argv[2]);
 	}
 	else
