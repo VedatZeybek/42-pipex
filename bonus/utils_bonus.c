@@ -1,44 +1,44 @@
 #include "pipex_bonus.h"
 
-static int	get_next_input(char *line, size_t limiter_len,
-		char *limiter, int fd[])
+static int get_next_input(size_t limiter_len, char *limiter, int fd[])
 {
-	size_t	line_len;
+	char *line;
+	size_t line_len;
+	int is_limiter;
 
+	line = get_next_line(STDIN_FILENO);
+	if (!line)
+		return (0);
 	line_len = ft_strlen(line);
 	if (line_len > 0 && line[line_len - 1] == '\n')
 		line[line_len - 1] = '\0';
-	if (ft_strncmp(line, limiter, limiter_len) == 0
-		&& ft_strlen(line) == limiter_len)
+	is_limiter = (ft_strncmp(line, limiter, limiter_len) == 0 && ft_strlen(line) == limiter_len);
+	if (!is_limiter)
 	{
-		free(line);
-		return (0);
+		line[line_len - 1] = '\n';
+		write(fd[1], line, line_len);
 	}
-	line[line_len - 1] = '\n';
-	write(fd[1], line, line_len);
 	free(line);
+	if (is_limiter)
+		return (0);
 	write(STDOUT_FILENO, "> ", 2);
-	line = get_next_line(STDIN_FILENO);
 	return (1);
 }
 
-static void	exec_heredoc(char *limiter, int fd[])
+
+static void exec_heredoc(char *limiter, int fd[])
 {
-	char	*line;
-	size_t	limiter_len;
+	size_t limiter_len;
 
 	close(fd[0]);
 	limiter_len = ft_strlen(limiter);
 	write(STDOUT_FILENO, "> ", 2);
-	line = get_next_line(STDIN_FILENO);
-	while (line != NULL)
-	{
-		if (get_next_input(line, limiter_len, limiter, fd) == 0)
-			break ;
-	}
+	while (get_next_input(limiter_len, limiter, fd))
+		;
 	close(fd[1]);
 	exit(EXIT_SUCCESS);
 }
+
 
 void	here_doc(char *limiter)
 {
