@@ -1,13 +1,29 @@
 #include "pipex_bonus.h"
 
-int	validate_args(int argc, char **argv)
+int	validate_args_bonus(int argc, char **argv)
 {
-	if (argc != 5)
+	int	i;
+
+	if (argc < 5)
 		return (0);
-	if (!argv[1] || !argv[2] || !argv[3] || !argv[4])
+	if (!argv[1] || !argv[2] || !argv[argc - 1])
 		return (0);
-	if (argv[2][0] == '\0' || argv[3][0] == '\0')
+	if (argv[1][0] == '\0' || argv[argc - 1][0] == '\0')
 		return (0);
+	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	{
+		if (argc < 6 || !argv[2] || argv[2][0] == '\0')
+			return (0);
+		i = 3;
+	}
+	else
+		i = 2;
+	while (i < argc - 1)
+	{
+		if (!argv[i] || argv[i][0] == '\0')
+			return (0);
+		i++;
+	}
 	return (1);
 }
 

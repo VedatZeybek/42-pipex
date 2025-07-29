@@ -1,27 +1,33 @@
 #include "pipex_bonus.h"
 
+static void	last_command(char *argv, char **env, int file_output)
+{
+	char	**args;
+	char	*cmd_path;
+
+	dup2(file_output, STDOUT_FILENO);
+	close(file_output);
+	args = ft_split(argv, ' ');
+	cmd_path = get_cmd_path(args[0], env);
+	if (!cmd_path)
+	{
+		free_splitted(args);
+		error(ERR_CMD);
+	}
+	if (execve(cmd_path, args, env) == -1)
+		error(ERR_EXCVE);
+}
+
 static void	execute_last_cmd(char *argv, char **env, int file_output)
 {
 	pid_t	pid;
-	char	**args;
-	char	*cmd_path;
 
 	pid = fork();
 	if (pid == -1)
 		error(ERR_PRC);
 	if (pid == 0)
 	{
-		dup2(file_output, STDOUT_FILENO);
-		close(file_output);
-		args = ft_split(argv, ' ');
-		cmd_path = get_cmd_path(args[0], env);
-		if (!cmd_path)
-		{
-			free_splitted(args);
-			error(ERR_CMD);
-		}
-		if (execve(cmd_path, args, env) == -1)
-			error(ERR_EXCVE);
+		last_command(argv, env, file_output);
 	}
 	else
 	{

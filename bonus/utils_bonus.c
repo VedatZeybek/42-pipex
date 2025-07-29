@@ -1,29 +1,24 @@
 #include "pipex_bonus.h"
 
-int	validate_args_bonus(int argc, char **argv)
+static int	get_next_input(char *line, size_t limiter_len,
+		char *limiter, int fd[])
 {
-	int	i;
+	size_t	line_len;
 
-	if (argc < 5)
-		return (0);
-	if (!argv[1] || !argv[2] || !argv[argc - 1])
-		return (0);
-	if (argv[1][0] == '\0' || argv[argc - 1][0] == '\0')
-		return (0);
-	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	line_len = ft_strlen(line);
+	if (line_len > 0 && line[line_len - 1] == '\n')
+		line[line_len - 1] = '\0';
+	if (ft_strncmp(line, limiter, limiter_len) == 0
+		&& ft_strlen(line) == limiter_len)
 	{
-		if (argc < 6 || !argv[2] || argv[2][0] == '\0')
-			return (0);
-		i = 3;
+		free(line);
+		return (0);
 	}
-	else
-		i = 2;
-	while (i < argc - 1)
-	{
-		if (!argv[i] || argv[i][0] == '\0')
-			return (0);
-		i++;
-	}
+	line[line_len - 1] = '\n';
+	write(fd[1], line, line_len);
+	free(line);
+	write(STDOUT_FILENO, "> ", 2);
+	line = get_next_line(STDIN_FILENO);
 	return (1);
 }
 
@@ -31,7 +26,6 @@ static void	exec_heredoc(char *limiter, int fd[])
 {
 	char	*line;
 	size_t	limiter_len;
-	size_t	line_len;
 
 	close(fd[0]);
 	limiter_len = ft_strlen(limiter);
@@ -39,20 +33,8 @@ static void	exec_heredoc(char *limiter, int fd[])
 	line = get_next_line(STDIN_FILENO);
 	while (line != NULL)
 	{
-		line_len = ft_strlen(line);
-		if (line_len > 0 && line[line_len - 1] == '\n')
-			line[line_len - 1] = '\0';
-		if (ft_strncmp(line, limiter, limiter_len) == 0 && 
-			ft_strlen(line) == limiter_len)
-		{
-			free(line);
+		if (get_next_input(line, limiter_len, limiter, fd) == 0)
 			break ;
-		}
-		line[line_len - 1] = '\n';
-		write(fd[1], line, line_len);
-		free(line);
-		write(STDOUT_FILENO, "> ", 2);
-		line = get_next_line(STDIN_FILENO);
 	}
 	close(fd[1]);
 	exit(EXIT_SUCCESS);

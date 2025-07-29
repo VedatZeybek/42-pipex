@@ -1,6 +1,6 @@
 #include "pipex_bonus.h"
 
-static void	execute_child(char *argv, char **env, int fd[]) 
+static void	execute_child(char *argv, char **env, int fd[])
 {
 	char	**args;
 	char	*cmd_path;
