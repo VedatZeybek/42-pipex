@@ -1,5 +1,26 @@
 #include "pipex.h"
 
+static void	command_control(char **cmd_args, int infile, int *pipe_fd)
+{
+	if (!cmd_args || !cmd_args[0])
+	{
+		close(infile);
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+		error(ERR_CMD);
+	}
+}
+
+static int	safe_fork(void)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid < 0)
+		error(ERR_PRC);
+	return (pid);
+}
+
 void	first_child(int	*pipe_fd, char **argv, char **env)
 {
 	pid_t	pid;
@@ -9,9 +30,8 @@ void	first_child(int	*pipe_fd, char **argv, char **env)
 
 	infile = open_file(argv[1], 0);
 	cmd1_args = ft_split(argv[2], ' ');
-	pid = fork();
-	if (pid < 0)
-		error(ERR_PRC);
+	command_control(cmd1_args, infile, pipe_fd);
+	pid = safe_fork();
 	if (pid == 0)
 	{
 		dup2(infile, STDIN_FILENO);
@@ -38,9 +58,8 @@ void	second_child(int *pipe_fd, char **argv, char **env)
 
 	outfile = open_file(argv[4], 1);
 	cmd2_args = ft_split(argv[3], ' ');
-	pid = fork();
-	if (pid < 0)
-		error(ERR_PRC);
+	command_control(cmd2_args, outfile, pipe_fd);
+	pid = safe_fork();
 	if (pid == 0)
 	{
 		dup2(pipe_fd[0], STDIN_FILENO);

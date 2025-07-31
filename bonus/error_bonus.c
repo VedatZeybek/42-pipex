@@ -10,7 +10,8 @@ int	validate_args_bonus(int argc, char **argv)
 		return (0);
 	if (argv[1][0] == '\0' || argv[argc - 1][0] == '\0')
 		return (0);
-	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	if (ft_strncmp(argv[1], "here_doc", 8) == 0
+		&& ft_strlen("here_doc") == ft_strlen(argv[1]))
 	{
 		if (argc < 6 || !argv[2] || argv[2][0] == '\0')
 			return (0);
@@ -55,6 +56,8 @@ int	open_file(char *file_name, int no)
 	else if (no == 1)
 		fd = open(file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	else if (no == 2)
+		fd = open(file_name, O_CREAT | O_WRONLY | O_APPEND, 0644);
+	else
 		fd = open(file_name, O_CREAT | O_WRONLY | O_APPEND, 0644);
 	if (fd == -1)
 		error(ERR_FILE);

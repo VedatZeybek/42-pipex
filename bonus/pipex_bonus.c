@@ -1,5 +1,11 @@
 #include "pipex_bonus.h"
 
+static void	command_control(char **cmd_args)
+{
+	if (!cmd_args || !cmd_args[0])
+		error(ERR_CMD);
+}
+
 static void	last_command(char *argv, char **env, int file_output)
 {
 	char	**args;
@@ -8,6 +14,7 @@ static void	last_command(char *argv, char **env, int file_output)
 	dup2(file_output, STDOUT_FILENO);
 	close(file_output);
 	args = ft_split(argv, ' ');
+	command_control(args);
 	cmd_path = get_cmd_path(args[0], env);
 	if (!cmd_path)
 	{
@@ -40,7 +47,8 @@ static void	first_file(int argc, char **argv, int *file_output, int *i)
 {
 	int	file_input;
 
-	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	if (ft_strncmp(argv[1], "here_doc", 8) == 0
+		&& ft_strlen("here_doc") == ft_strlen(argv[1]))
 	{
 		*i = 3;
 		*file_output = open_file(argv[argc - 1], 2);

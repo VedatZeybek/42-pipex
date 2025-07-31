@@ -1,5 +1,13 @@
 #include "pipex_bonus.h"
 
+static void	command_control(char **cmd_args)
+{
+	if (!cmd_args || !cmd_args[0])
+	{
+		error(ERR_CMD);
+	}
+}
+
 static void	execute_child(char *argv, char **env, int fd[])
 {
 	char	**args;
@@ -9,6 +17,7 @@ static void	execute_child(char *argv, char **env, int fd[])
 	dup2(fd[1], STDOUT_FILENO);
 	close(fd[1]);
 	args = ft_split(argv, ' ');
+	command_control(args);
 	cmd_path = get_cmd_path(args[0], env);
 	if (!cmd_path)
 	{

@@ -38,6 +38,8 @@ int	open_file(char *file_name, int no)
 		fd = open(file_name, O_RDONLY, 0644);
 	else if (no == 1)
 		fd = open(file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	else
+		fd = open(file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd == -1)
 		error(ERR_FILE);
 	return (fd);

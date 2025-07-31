@@ -16,7 +16,6 @@
 
 # include <fcntl.h>
 # include <sys/wait.h>
-# include <stdio.h>
 # include "../libft/libft.h"
 
 int		validate_args_bonus(int argc, char **argv);

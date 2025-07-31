@@ -12,7 +12,6 @@
 
 # include <fcntl.h>
 # include <sys/wait.h>
-# include <stdio.h>
 # include "../libft/libft.h"
 
 void	error(char *msg);
